@@ -1,4 +1,3 @@
-
 # GoIT CS Homework 02 — Основи операційних систем
 
 ## Про проєкт
@@ -12,11 +11,25 @@
 ```text
 goit-cs-hw-02/
 ├── README.md
+├── screenshots/
+│   ├── task-2-browser.png
+│   └── task-2-docker-compose.png
 ├── task-1-website-checker/
 │   ├── check_websites.sh
 │   └── website_status.log
 └── task-2-fastapi-postgres/
-    └── (файли другого завдання)
+    ├── conf/
+    │   └── db.py
+    ├── static/
+    │   ├── main.js
+    │   └── style.css
+    ├── templates/
+    │   └── index.html
+    ├── docker-compose.yaml
+    ├── Dockerfile
+    ├── main.py
+    └── requirements.txt
+
 ```
 
 ## Завдання 1. Перевірка доступності вебсайтів
@@ -54,11 +67,68 @@ bash task-1-website-checker/check_websites.sh
 
 ## Завдання 2. FastAPI та PostgreSQL у Docker Compose
 
-*Розділ буде доповнено після виконання другого завдання.*
+### Мета
 
-Планується описати структуру застосунку, налаштування Docker Compose, запуск контейнерів і перевірку роботи FastAPI та PostgreSQL.
+Запустити вебзастосунок FastAPI та базу даних PostgreSQL в окремих Docker-контейнерах за допомогою Docker Compose.
 
-## Використані технології
+### Структура завдання
+
+Каталог `task-2-fastapi-postgres/` містить файли та ресурси вебзастосунку:
+
+* `Dockerfile` — інструкції для створення Docker-образу застосунку.
+* `docker-compose.yaml` — конфігурація сервісів застосунку та PostgreSQL.
+* `main.py` — основний файл застосунку FastAPI.
+* `requirements.txt` — список залежностей Python.
+* `conf/` — конфігурація підключення до бази даних.
+* `static/` — статичні файли вебінтерфейсу.
+* `templates/` — шаблони HTML-сторінок.
+
+### Налаштування Docker Compose
+
+У файлі `docker-compose.yaml` визначено два сервіси:
+
+* **`app`** — вебзастосунок FastAPI, доступний на порту `8000`.
+* **`db`** — база даних PostgreSQL, доступна всередині Docker-мережі за ім'ям сервісу `db`.
+
+Для PostgreSQL налаштовано перевірку готовності за допомогою `pg_isready`. Застосунок запускається після того, як база даних проходить перевірку готовності.
+
+Дані PostgreSQL зберігаються в окремому Docker volume `postgres_data`, тому вони не зникають під час звичайного перезапуску контейнерів.
+
+### Як запустити
+
+Потрібно встановити Docker Desktop і переконатися, що Docker Engine запущений.
+
+У терміналі відкрийте каталог `task-2-fastapi-postgres/` та виконайте:
+
+```bash
+docker compose up --build
+```
+
+Команда створює Docker-образ застосунку за потреби, завантажує необхідні образи та запускає контейнери.
+
+Після успішного запуску вебзастосунок доступний у браузері за адресою:
+
+http://localhost:8000
+
+### Перевірка роботи
+
+1. Відкрити `http://localhost:8000` у браузері.
+2. Натиснути кнопку  **«Перевірити БД»** .
+3. Переконатися, що відображається повідомлення про успішну перевірку `Welcome to FastAPI!`.
+
+Успішне підключення до PostgreSQL також підтверджується виконанням SQL-запиту `SELECT 1` та HTTP-відповіддю `200 OK` від маршруту `/healthchecker` у логах застосунку.
+
+### Зупинка контейнерів
+
+Щоб зупинити запущене середовище, натисніть `Ctrl+C` у терміналі, а потім виконайте:
+
+```bash
+docker compose down
+```
+
+Команда зупиняє та видаляє контейнери й мережу проєкту. Збережений том `postgres_data` за замовчуванням залишається на місці.
+
+### Використані технології
 
 * Bash
 * Linux / Ubuntu через WSL 2
@@ -67,3 +137,4 @@ bash task-1-website-checker/check_websites.sh
 * Docker Desktop і Docker Compose
 * FastAPI
 * PostgreSQL
+* Python
