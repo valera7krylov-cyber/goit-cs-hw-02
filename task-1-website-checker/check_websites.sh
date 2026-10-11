@@ -7,7 +7,7 @@ websites=(
     "https://twitter.com"
 )
 
-log_file="website_status.log"
+log_file="$(dirname "$0")/website_status.log"
 
 # Clear the log file before each run
 : > "$log_file"
